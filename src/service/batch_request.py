@@ -1,4 +1,5 @@
 """Creates and sends batch API requests."""
+import json
 
 
 class BatchConstants(object):
@@ -22,6 +23,10 @@ class JSONWrapper(object):
     def get_data(self):
         """Return the data saved in the local dict."""
         return self._data
+
+    def __str__(self):
+        """Serialize the object as a JSON object."""
+        return json.dumps(self._data)
 
 
 class BatchAction(JSONWrapper):
@@ -49,7 +54,8 @@ class BatchObject(JSONWrapper):
 class BatchRequest(JSONWrapper):
     """this class models a batch request."""
 
-    def __init__(self, transfers, operation, objects):
+    def __init__(self, operation, objects,
+                 transfers=[BatchConstants.TRANSFER_TYPES['basic']]):
         """Create batch request with the given parameters."""
         JSONWrapper.__init__(self)
         self._data['transfers'] = transfers

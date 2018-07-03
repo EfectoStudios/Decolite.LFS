@@ -1,4 +1,5 @@
 """Unit tests for Batch API."""
+import json
 import unittest
 from src.service.batch_request import BatchConstants, JSONWrapper, \
                                       BatchAction, BatchObject, \
@@ -37,6 +38,12 @@ class JSONWrapperTest(unittest.TestCase):
         wrapper = JSONWrapper()
         self.assertDictEqual(wrapper.get_data(), {})
 
+    def test_str(self):
+        """Test str() function equal JSON dump."""
+        test_data = {'foo': 'bar', 'foo2': ['hello', 'world']}
+        wrapper = JSONWrapper()
+        wrapper._data = test_data
+        self.assertEqual(str(wrapper), json.dumps(test_data))
 
 class BatchActionTest(unittest.TestCase):
     """Test case for batch actions."""
@@ -70,7 +77,7 @@ class BatchRequestTest(unittest.TestCase):
 
     def test_attributes(self):
         """Verifies the request has the appropiate attributes."""
-        req = BatchRequest(None, None, None)
+        req = BatchRequest(None, None)
         self.assertTrue('transfers' in req.get_data())
         self.assertTrue('operation' in req.get_data())
         self.assertTrue('objects' in req.get_data())
