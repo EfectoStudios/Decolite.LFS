@@ -1,1 +1,1 @@
-# git-LFS-for-Lambda
+# git LFS for Lambda
