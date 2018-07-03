@@ -32,7 +32,7 @@ class JSONWrapper(object):
 class BatchAction(JSONWrapper):
     """Action for a given object in a batch response."""
 
-    def __init__(self, href='', header=None, expires_at='',
+    def __init__(self, href='', expires_at='', header=None,
                  operation_type=BatchConstants.OPERATION_TYPES['download']):
         """Initialize batch action with the given parameter."""
         JSONWrapper.__init__(self)
@@ -43,14 +43,14 @@ class BatchAction(JSONWrapper):
 class BatchObject(JSONWrapper):
     """Object definition for a batch request."""
 
-    def __init__(self, oid=None, size=0, isResponse=False):
+    def __init__(self, oid='', size=0, actions=[]):
         """Initialize batch object with the given parameters."""
         JSONWrapper.__init__(self)
         self._data['oid'] = oid
         self._data['size'] = size
 
-        if isResponse:
-            self._data['actions'] = None
+        if len(actions) != 0:
+            self._data['actions'] = actions
 
 
 class BatchRequest(JSONWrapper):

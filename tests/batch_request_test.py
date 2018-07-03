@@ -66,12 +66,13 @@ class BatchObjectTest(unittest.TestCase):
 
     def test_attributes(self):
         """Verify the object has the corresponding attributes."""
-        obj = BatchObject(isResponse=False)
+        obj = BatchObject()
         self.assertTrue('oid' in obj.get_data())
         self.assertTrue('size' in obj.get_data())
         self.assertFalse('actions' in obj.get_data())
 
-        obj = BatchObject(isResponse=True)
+        acts = [BatchAction()]
+        obj = BatchObject(actions=acts)
         self.assertTrue('oid' in obj.get_data())
         self.assertTrue('size' in obj.get_data())
         self.assertTrue('actions' in obj.get_data())
