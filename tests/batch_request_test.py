@@ -1,7 +1,8 @@
 """Unit tests for Batch API."""
 import unittest
-from src.service.batch_request import BatchConstants, BatchRequest, \
-                                      BatchResponse
+from src.service.batch_request import BatchConstants, JSONWrapper, \
+                                      BatchAction, BatchObject, \
+                                      BatchRequest, BatchResponse
 
 
 class BatchConstantsTest(unittest.TestCase):
@@ -23,15 +24,56 @@ class BatchConstantsTest(unittest.TestCase):
         self.assertGreaterEqual(len(BatchConstants.TRANSFER_TYPES), 1)
 
 
+class JSONWrapperTest(unittest.TestCase):
+    """Test case for the JSON wrapper."""
+
+    def test_attributes(self):
+        """Verify the initialized object possesses a dictionary."""
+        wrapper = JSONWrapper()
+        self.assertIsNotNone(wrapper._data)
+
+    def test_getter(self):
+        """Test the getter function."""
+        wrapper = JSONWrapper()
+        self.assertDictEqual(wrapper.get_data(), {})
+
+
+class BatchActionTest(unittest.TestCase):
+    """Test case for batch actions."""
+
+    def test_attributes(self):
+        """Verify the action has the corresponding attributes."""
+        action = BatchAction()
+        self.assertTrue('download' in action.get_data() or
+                        'upload' in action.get_data())
+        self.assertEqual(len(action.get_data()), 1)
+
+
+class BatchObjectTest(unittest.TestCase):
+    """Test case for a batch object."""
+
+    def test_attributes(self):
+        """Verify the object has the corresponding attributes."""
+        obj = BatchObject(isResponse=False)
+        self.assertTrue('oid' in obj.get_data())
+        self.assertTrue('size' in obj.get_data())
+        self.assertFalse('actions' in obj.get_data())
+
+        obj = BatchObject(isResponse=True)
+        self.assertTrue('oid' in obj.get_data())
+        self.assertTrue('size' in obj.get_data())
+        self.assertTrue('actions' in obj.get_data())
+
+
 class BatchRequestTest(unittest.TestCase):
     """Test case for batch requests."""
 
     def test_attributes(self):
         """Verifies the request has the appropiate attributes."""
         req = BatchRequest(None, None, None)
-        self.assertTrue(hasattr(req, 'operation'))
-        self.assertTrue(hasattr(req, 'transfers'))
-        self.assertTrue(hasattr(req, 'objects'))
+        self.assertTrue('transfers' in req.get_data())
+        self.assertTrue('operation' in req.get_data())
+        self.assertTrue('objects' in req.get_data())
 
 
 class BatchResponseTest(unittest.TestCase):
@@ -40,5 +82,5 @@ class BatchResponseTest(unittest.TestCase):
     def test_attributes(self):
         """Verifies the response has the appropiate attributes."""
         res = BatchResponse(None, None)
-        self.assertTrue(hasattr(res, 'transfer'))
-        self.assertTrue(hasattr(res, 'objects'))
+        self.assertTrue('transfer' in res.get_data())
+        self.assertTrue('objects' in res.get_data())
