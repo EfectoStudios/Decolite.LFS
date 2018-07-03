@@ -45,15 +45,20 @@ class JSONWrapperTest(unittest.TestCase):
         wrapper._data = test_data
         self.assertEqual(str(wrapper), json.dumps(test_data))
 
+
 class BatchActionTest(unittest.TestCase):
     """Test case for batch actions."""
 
     def test_attributes(self):
         """Verify the action has the corresponding attributes."""
         action = BatchAction()
-        self.assertTrue('download' in action.get_data() or
-                        'upload' in action.get_data())
-        self.assertEqual(len(action.get_data()), 1)
+        data = action.get_data()
+
+        self.assertTrue('download' in data or 'upload' in data)
+        self.assertEqual(len(data), 1)
+
+        self.assertTrue('href' in list(data.values())[0])
+        self.assertTrue('expires_at' in list(data.values())[0])
 
 
 class BatchObjectTest(unittest.TestCase):
@@ -77,7 +82,7 @@ class BatchRequestTest(unittest.TestCase):
 
     def test_attributes(self):
         """Verifies the request has the appropiate attributes."""
-        req = BatchRequest(None, None)
+        req = BatchRequest()
         self.assertTrue('transfers' in req.get_data())
         self.assertTrue('operation' in req.get_data())
         self.assertTrue('objects' in req.get_data())
@@ -88,6 +93,13 @@ class BatchResponseTest(unittest.TestCase):
 
     def test_attributes(self):
         """Verifies the response has the appropiate attributes."""
-        res = BatchResponse(None, None)
+        res = BatchResponse()
         self.assertTrue('transfer' in res.get_data())
         self.assertTrue('objects' in res.get_data())
+
+    def test_default_values(self):
+        """Test that the default values are correct and well typed."""
+        res = BatchResponse()
+        self.assertTrue(res.get_data()['transfer'],
+                        BatchConstants.TRANSFER_TYPES['basic'])
+        self.assertEqual(res.get_data()['objects'], [])
