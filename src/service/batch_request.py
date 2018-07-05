@@ -32,11 +32,11 @@ class JSONWrapper(object):
 class BatchAction(JSONWrapper):
     """Action for a given object in a batch response."""
 
-    def __init__(self, href='', expires_at='', header=None,
+    def __init__(self, href='', expires_in=300, header=None,
                  operation_type=BatchConstants.OPERATION_TYPES['download']):
         """Initialize batch action with the given parameter."""
         JSONWrapper.__init__(self)
-        action = {'href': href, 'expires_at': expires_at}
+        action = {'href': href, 'expires_in': expires_in}
         self._data[operation_type] = action
 
 

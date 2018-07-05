@@ -58,7 +58,7 @@ class BatchActionTest(unittest.TestCase):
         self.assertEqual(len(data), 1)
 
         self.assertTrue('href' in list(data.values())[0])
-        self.assertTrue('expires_at' in list(data.values())[0])
+        self.assertTrue('expires_in' in list(data.values())[0])
 
 
 class BatchObjectTest(unittest.TestCase):
