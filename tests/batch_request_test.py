@@ -16,7 +16,9 @@ class BatchConstantsTest(unittest.TestCase):
                          'upload')
         self.assertEqual(BatchConstants.OPERATION_TYPES['download'],
                          'download')
-        self.assertEqual(len(BatchConstants.OPERATION_TYPES), 2)
+        self.assertEqual(BatchConstants.OPERATION_TYPES['verify'],
+                         'verify')
+        self.assertEqual(len(BatchConstants.OPERATION_TYPES), 3)
 
     def test_transfers(self):
         """Verifies tranfer types are well defined."""

@@ -6,7 +6,8 @@ class BatchConstants(object):
     """Constants defined in batch API."""
 
     OPERATION_TYPES = {'upload': 'upload',
-                       'download': 'download'}
+                       'download': 'download',
+                       'verify': 'verify'}
     """Operations allowed in batch API."""
 
     TRANSFER_TYPES = {'basic': 'basic'}

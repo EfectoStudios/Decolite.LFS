@@ -11,13 +11,12 @@ class URIGeneratorTest(unittest.TestCase):
 
     def setUp(self):
         """Set mock stub services for uri testing."""
-        self.region_name = 'us-east-2'
         self.bucket_name = 'some-lfs'
         self.repo_name = 'SomeRandomRepo'
         self.oid = 'SomeRandomOID'
         with mock_s3():
             # Create bucket.
-            self.s3 = resource('s3', region_name=self.region_name)
+            self.s3 = resource('s3')
             self.s3.create_bucket(Bucket=self.bucket_name)
             # Adding a file
             self.s3_client = client('s3', region_name='us-east-2')
