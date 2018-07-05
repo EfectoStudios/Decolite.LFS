@@ -22,17 +22,23 @@ class URIGeneratorTest(unittest.TestCase):
             # Adding a file
             self.s3_client = client('s3', region_name='us-east-2')
             self.s3_client.put_object(Bucket='some-lfs',
-                                      key=self.repo_name + '/' + self.oid,
+                                      Key=self.repo_name + '/' + self.oid,
                                       Body="Totally a binary file")
 
     def test_download_uri(self):
         """Verify that the uri is generated according to the file and repo."""
-        self.fail('test not implemented')
+        url_regex = 'https://' + self.bucket_name + '.s3.amazonaws.com/'
+        url_regex += self.repo_name + '/' + self.oid
+
+        self.assertTrue(url_regex in create_download_uri(self.bucket_name,
+                                                         self.repo_name,
+                                                         self.oid))
 
     def test_upload_uri(self):
         """Verify that the uri is generated according to the file and repo."""
-        self.fail('test not implemented')
+        url_regex = 'https://' + self.bucket_name + '.s3.amazonaws.com/'
+        url_regex += self.repo_name + '/' + self.oid
 
-    def test_folder_creation(self):
-        """Test the lambda is able to create a new folder for a repo."""
-        self.fail('test not implemented')
+        self.assertTrue(url_regex in create_upload_uri(self.bucket_name,
+                                                       self.repo_name,
+                                                       self.oid))
