@@ -1,13 +1,29 @@
 """Unit tests for uri generation."""
-import json
 import unittest
-from botocore.exceptions import ClientError
+from boto3 import resource, client
 from moto import mock_s3
-import src.service.uri_generator
+from src.service.uri_generator import create_download_uri, \
+                                      create_upload_uri
 
 
 class URIGeneratorTest(unittest.TestCase):
     """Test case for uri generation from s3 buckets."""
+
+    def setUp(self):
+        """Set mock stub services for uri testing."""
+        self.region_name = 'us-east-2'
+        self.bucket_name = 'some-lfs'
+        self.repo_name = 'SomeRandomRepo'
+        self.oid = 'SomeRandomOID'
+        with mock_s3():
+            # Create bucket.
+            self.s3 = resource('s3', region_name=self.region_name)
+            self.s3.create_bucket(Bucket=self.bucket_name)
+            # Adding a file
+            self.s3_client = client('s3', region_name='us-east-2')
+            self.s3_client.put_object(Bucket='some-lfs',
+                                      key=self.repo_name + '/' + self.oid,
+                                      Body="Totally a binary file")
 
     def test_download_uri(self):
         """Verify that the uri is generated according to the file and repo."""
@@ -18,8 +34,5 @@ class URIGeneratorTest(unittest.TestCase):
         self.fail('test not implemented')
 
     def test_folder_creation(self):
-        """
-        Test the lambda is able to create a new folder corresponding
-        to a new repo.
-        """
+        """Test the lambda is able to create a new folder for a repo."""
         self.fail('test not implemented')
