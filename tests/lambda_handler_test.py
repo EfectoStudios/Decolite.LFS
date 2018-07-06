@@ -1,23 +1,37 @@
 """Unit tests for handling function."""
+from copy import deepcopy
+from mock import patch
+import os
 import unittest
+from base64 import b64encode
 from src.handler import lambda_handler
 
 
-def create_event():
+def create_event(authorization=None):
     """Create a sample lambda event from proxy integration."""
-    return {'path': "test/hello",
-            'headers': {},
-            'pathParameters': {
-                    'proxy': "hello"
+    event = {'resource': "/{proxy+}",
+             'path': "test/hello",
+             'httpMethod': "GET",
+             'headers': {},
+             'queryStringParameters': {},
+             'pathParameters': {
+                'proxy': "hello"
                 },
-            'requestContext': {},
-            'resource': "/{proxy+}",
-            'httpMethod': "GET",
-            'queryStringParameters': {},
-            'stageVariables': {
-                    'stageVarName': "stageVarValue"
-                }
-            }
+             'stageVariables': {
+                'stageVarName': "stageVarValue"
+                },
+             'requestContext': {},
+             'body': "Some JSON string",
+             'isBase64Encoded': False
+             }
+
+    headers = {}
+    if authorization:
+        headers.setdefault('Authorization', authorization)
+
+    event['headers'] = headers
+
+    return event
 
 
 class MockContext(object):
@@ -47,6 +61,24 @@ class HandlerFunctionTest(unittest.TestCase):
         """Test base invocation."""
         response = lambda_handler.lfs_handler(create_event(), MockContext())
         self.assertTrue(isinstance(response, dict))
+        self.assertTrue('isBase64Encoded' in response)
         self.assertTrue('statusCode' in response)
         self.assertTrue('headers' in response)
         self.assertTrue('body' in response)
+
+    @patch.dict(os.environ, {'USERNAME': 'PASSWORD'})
+    def test_authorization(self):
+        """Test the basic authorization flow."""
+        # Testing a proper authentication
+        auth = b64encode('USERNAME:PASWORD'.encode()).decode()
+        event = deepcopy(create_event(authorization="Basic "+auth))
+        print(event)
+        response = lambda_handler.lfs_handler(event, MockContext())
+        self.assertEqual(response['statusCode'], 200)
+        # Testing a worng authentication
+        event = create_event(authorization='ajdsadsasakjdsakjh')
+        response = lambda_handler.lfs_handler(event, MockContext())
+        self.assertEqual(response['statusCode'], 401)
+        # Testing that no authentication fails
+        response = lambda_handler.lfs_handler(create_event(), MockContext())
+        self.assertEqual(response['statusCode'], 401)
