@@ -20,6 +20,7 @@ def create_response(status_code=200, bacth_request=None):
 
 def base_handler():
     """Return the root of lfs repo."""
+    return create_response()
 
 
 def batch_handler():
@@ -28,3 +29,4 @@ def batch_handler():
 
 def lock_handler():
     """Handle lock requests. Currently not supported."""
+    return create_response(status_code=404)

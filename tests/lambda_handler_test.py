@@ -4,7 +4,8 @@ from mock import patch
 import os
 import unittest
 from base64 import b64encode
-from src.handler.lambda_handler import create_response, lfs_handler
+from src.handler.lambda_handler import create_response, lfs_handler ,\
+                                       base_handler, lock_handler
 
 
 def create_event(authorization=None):
@@ -96,3 +97,15 @@ class CreateResponseTest(unittest.TestCase):
         default_headers = {'Accept': "application/vnd.git-lfs+json",
                            'Content-Type': "application/vnd.git-lfs+json"}
         self.assertDictEqual(default_headers, create_response()['headers'])
+
+
+class SimpleResponsesTest(unittest.TestCase):
+    """Unit tests for the simple requests."""
+
+    def test_base_handler(self):
+        """Test the response for a base request to the server."""
+        self.assertEqual(200, base_handler()['statusCode'])
+
+    def test_lock_handler(self):
+        """Test the response for the unavailable lock service."""
+        self.assertEqual(404, lock_handler()['statusCode'])
