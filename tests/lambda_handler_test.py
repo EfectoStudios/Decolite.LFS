@@ -66,6 +66,7 @@ class HandlerFunctionTest(unittest.TestCase):
         self.assertTrue('headers' in response)
         self.assertTrue('body' in response)
 
+    @unittest.skip("Omitted for further testing")
     @patch.dict(os.environ, {'USERNAME': 'PASSWORD'})
     def test_authorization(self):
         """Test the basic authorization flow."""

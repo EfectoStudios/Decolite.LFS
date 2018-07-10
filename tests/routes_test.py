@@ -12,7 +12,11 @@ class RoutesTest(unittest.TestCase):
         batch = base + 'objects/batch'
         locks = base + 'locks'
 
-        self.assertEqual(('someone', 'holi.git', ''),
+        self.assertEqual(('someone', 'holi.git', 'BATCH'),
                          routes.get_path_request(batch))
-        self.assertEqual(('someone', 'holi.git', ''),
+        self.assertEqual(('someone', 'holi.git', 'LOCKS'),
                          routes.get_path_request(locks))
+        self.assertEqual(('someone', 'holi.git', 'BASE'),
+                         routes.get_path_request(base))
+        self.assertEqual(('someone', 'holi.git', 'BAD_REQUEST'),
+                         routes.get_path_request(base+'surely/not/valid'))
