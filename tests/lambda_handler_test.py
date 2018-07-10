@@ -4,7 +4,7 @@ from mock import patch
 import os
 import unittest
 from base64 import b64encode
-from src.handler import lambda_handler
+from src.handler.lambda_handler import create_response, lfs_handler
 
 
 def create_event(authorization=None):
@@ -57,9 +57,10 @@ class MockContext(object):
 class HandlerFunctionTest(unittest.TestCase):
     """Unit tests for handling."""
 
+    @unittest.skip("Omitted for further testing")
     def test_invocation(self):
         """Test base invocation."""
-        response = lambda_handler.lfs_handler(create_event(), MockContext())
+        response = lfs_handler(create_event(), MockContext())
         self.assertTrue(isinstance(response, dict))
         self.assertTrue('isBase64Encoded' in response)
         self.assertTrue('statusCode' in response)
@@ -74,12 +75,24 @@ class HandlerFunctionTest(unittest.TestCase):
         auth = b64encode('USERNAME:PASWORD'.encode()).decode()
         event = deepcopy(create_event(authorization="Basic "+auth))
         print(event)
-        response = lambda_handler.lfs_handler(event, MockContext())
+        response = lfs_handler(event, MockContext())
         self.assertEqual(response['statusCode'], 200)
         # Testing a worng authentication
         event = create_event(authorization='ajdsadsasakjdsakjh')
-        response = lambda_handler.lfs_handler(event, MockContext())
+        response = lfs_handler(event, MockContext())
         self.assertEqual(response['statusCode'], 401)
         # Testing that no authentication fails
-        response = lambda_handler.lfs_handler(create_event(), MockContext())
+        response = lfs_handler(create_event(), MockContext())
         self.assertEqual(response['statusCode'], 401)
+
+
+class CreateResponseTest(unittest.TestCase):
+    """Unit tests for response creation."""
+
+    def test_invocation(self):
+        """Test base invocation."""
+        self.assertEqual(200, create_response()['statusCode'])
+        self.assertEqual(401, create_response(status_code=401)['statusCode'])
+        default_headers = {'Accept': "application/vnd.git-lfs+json",
+                           'Content-Type': "application/vnd.git-lfs+json"}
+        self.assertDictEqual(default_headers, create_response()['headers'])

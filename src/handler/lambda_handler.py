@@ -3,17 +3,18 @@
 
 def lfs_handler(event, context):
     """Handle git lfs requests sent through API Gateway."""
-    # Response skeleton
-    response = {'isBase64Encoded': False,
-                'statusCode': 200,
-                'headers': {
-                    'Accept': "application/vnd.git-lfs+json",
-                    'Content-Type': "application/vnd.git-lfs+json"
-                    },
-                'body': ''}
-    # Check for the Authorization header
     if 'Authorization' not in event['headers']:
-        response['statusCode'] = 401
+        status_code = 401
+    return None
+
+
+def create_response(status_code=200, bacth_request=None):
+    """Create the response according to the given parameters."""
+    default_headers = {'Accept': "application/vnd.git-lfs+json",
+                       'Content-Type': "application/vnd.git-lfs+json"}
+    response = {'isBase64Encoded': False,
+                'statusCode': status_code,
+                'headers': default_headers}
     return response
 
 
