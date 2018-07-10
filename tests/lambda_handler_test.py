@@ -4,7 +4,7 @@ from mock import patch
 import os
 import unittest
 from base64 import b64encode
-from src.handler.lambda_handler import create_response, lfs_handler ,\
+from src.handler.lambda_handler import create_response, lfs_handler, \
                                        base_handler, lock_handler
 
 
@@ -29,9 +29,7 @@ def create_event(authorization=None):
     headers = {}
     if authorization:
         headers.setdefault('Authorization', authorization)
-
     event['headers'] = headers
-
     return event
 
 
