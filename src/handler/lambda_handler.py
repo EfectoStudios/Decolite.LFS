@@ -1,5 +1,6 @@
 """Function invocation module."""
-from routes import get_path_request
+import json
+from src.handler.routes import get_path_request
 
 
 def lfs_handler(event, context):
@@ -15,7 +16,7 @@ def lfs_handler(event, context):
     elif type == 'LOCKS':
         res = lock_handler()
     elif type == 'BATCH':
-        res = batch_handler()
+        res = batch_handler(json.loads(event['body']))
     else:
         res = create_response(status_code=400)
 
@@ -34,10 +35,6 @@ def create_response(status_code=200, response=None):
     return response
 
 
-def batch_handler():
-    """Handle batch requests."""
-
-
 def base_handler():
     """Return the root of lfs repo."""
     return create_response()
@@ -46,3 +43,7 @@ def base_handler():
 def lock_handler():
     """Handle lock requests. Currently not supported."""
     return create_response(status_code=404)
+
+
+def batch_handler(request):
+    """Handle batch requests."""
