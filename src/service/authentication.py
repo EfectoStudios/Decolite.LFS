@@ -3,7 +3,7 @@ import os
 from base64 import b64decode
 
 
-def authorize(auth):
+def authenticate(auth):
     """Decode the authorization header and authorize against the service."""
     auth_prefix = 'Basic '
     if auth_prefix not in auth:
@@ -12,9 +12,4 @@ def authorize(auth):
     auth = auth.replace(auth_prefix, '')
     auth = b64decode(auth.encode()).decode()
     auth = auth.split(':')
-    return authenticate(auth[0], auth[1])
-
-
-def authenticate(username, password):
-    """Authenticate the user against the service."""
-    return os.environ['LFS_USERNAME'] == username and os.environ['LFS_PASSWORD'] == password  # noqa: E501
+    return os.environ['LFS_USERNAME'] == auth[0] and os.environ['LFS_PASSWORD'] == auth[1]  # noqa: E501
