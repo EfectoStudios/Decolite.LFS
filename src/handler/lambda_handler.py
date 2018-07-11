@@ -1,7 +1,8 @@
 """Function invocation module."""
+import json
 from src.handler.routes import get_path_request
 from src.service.authentication import authenticate
-from src.service.batch_request import BatchResponse, BatchRequest, BatchAction
+from src.service.batch_request import BatchRequest, BatchAction
 from src.service.uri_generator import create_uri
 
 
@@ -30,12 +31,12 @@ def create_response(status_code=200, response=None):
     """Create the response according to the given parameters."""
     default_headers = {'Accept': "application/vnd.git-lfs+json",
                        'Content-Type': "application/vnd.git-lfs+json"}
-    response = {'isBase64Encoded': False,
-                'statusCode': status_code,
-                'headers': default_headers}
+    resp = {'isBase64Encoded': False,
+            'statusCode': status_code,
+            'headers': default_headers}
     if response:
-        response['body'] = str(response)
-    return response
+        resp['body'] = str(response)
+    return resp
 
 
 def base_handler():
@@ -63,8 +64,8 @@ def batch_handler(owner, repo, request):
         obj.add_action(act)
         res_objects.append(obj.get_data())
 
-    batch_res = BatchResponse(objects=res_objects)
-    json_body = str(batch_res)
+    batch_res = json.dumps(res_objects)
+    print(batch_res)
 
-    res = create_response(response=json_body)
+    res = create_response(response=batch_res)
     return res
