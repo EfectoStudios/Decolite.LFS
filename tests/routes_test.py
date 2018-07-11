@@ -20,3 +20,5 @@ class RoutesTest(unittest.TestCase):
                          routes.get_path_request(base))
         self.assertEqual(('someone', 'holi.git', 'BAD_REQUEST'),
                          routes.get_path_request(base+'surely/not/valid'))
+        self.assertEqual((None, None, 'BAD_REQUEST'),
+                         routes.get_path_request('surely/not/valid'))
