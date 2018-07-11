@@ -64,6 +64,13 @@ class BatchObject(JSONWrapper):
         if len(actions) != 0:
             self._data['actions'] = actions
 
+    def add_action(self, action):
+        """Add a new action to the current object."""
+        if 'actions' not in self._data.keys():
+            self._data['actions'] = {}
+        temp = action.get_data()
+        self._data['actions'][list(temp.keys())[0]] = temp[list(temp.keys())[0]]  # noqa: E501
+
 
 class BatchRequest(JSONWrapper):
     """this class models a batch request."""

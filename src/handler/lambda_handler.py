@@ -1,11 +1,15 @@
 """Function invocation module."""
-import json
 from src.handler.routes import get_path_request
+from src.service.authentication import authenticate
+from src.service.batch_request import BatchResponse, BatchRequest, BatchAction
+from src.service.uri_generator import create_uri
 
 
 def lfs_handler(event, context):
     """Handle git lfs requests sent through API Gateway."""
     if 'Authorization' not in event['headers']:
+        return create_response(status_code=401)
+    elif not authenticate(event['headers']['Authorization']):
         return create_response(status_code=401)
 
     path = event['path']
@@ -16,10 +20,9 @@ def lfs_handler(event, context):
     elif type == 'LOCKS':
         res = lock_handler()
     elif type == 'BATCH':
-        res = batch_handler(json.loads(event['body']))
+        res = batch_handler(owner, repo, event['body'])
     else:
         res = create_response(status_code=400)
-
     return res
 
 
@@ -45,5 +48,23 @@ def lock_handler():
     return create_response(status_code=404)
 
 
-def batch_handler(request):
+def batch_handler(owner, repo, request):
     """Handle batch requests."""
+    req = BatchRequest()
+    req.set_data_from_JSON(request)
+    operation = req.get_data()['operation']
+
+    objects = req.get_objects()
+    res_objects = []
+    for obj in objects:
+        uri = create_uri(owner, repo, obj.get_data()['oid'],
+                         upload=operation == 'upload')
+        act = BatchAction(href=uri, operation_type=operation)
+        obj.add_action(act)
+        res_objects.append(obj.get_data())
+
+    batch_res = BatchResponse(objects=res_objects)
+    json_body = str(batch_res)
+
+    res = create_response(response=json_body)
+    return res
