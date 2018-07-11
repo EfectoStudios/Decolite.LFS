@@ -2,19 +2,15 @@
 from boto3 import client
 
 
-def create_download_uri(bucket_name, repo_name, resource_oid, expires_in=300):
+def create_uri(bucket_name, owner_name, repo_name, resource_oid,
+               upload=False, expires_in=300):
     """Create a download uri for the given oid and repo."""
+    action = 'get_object'
+    if upload:
+        action = 'put_object'
+
     s3_client = client('s3')
     params = {'Bucket': bucket_name,
-              'Key': repo_name + '/' + resource_oid}
-    return s3_client.generate_presigned_url('get_object', Params=params,
-                                            ExpiresIn=expires_in)
-
-
-def create_upload_uri(bucket_name, repo_name, resource_oid, expires_in=300):
-    """Create an upload uri for a new oid."""
-    s3_client = client('s3')
-    params = {'Bucket': bucket_name,
-              'Key': repo_name + '/' + resource_oid}
-    return s3_client.generate_presigned_url('put_object', Params=params,
+              'Key': owner_name + '/' + repo_name + '/' + resource_oid}
+    return s3_client.generate_presigned_url(action, Params=params,
                                             ExpiresIn=expires_in)
