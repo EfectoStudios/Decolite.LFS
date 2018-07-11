@@ -25,6 +25,10 @@ class JSONWrapper(object):
         """Return the data saved in the local dict."""
         return self._data
 
+    def set_data_from_JSON(self, json_string):
+        """Set the wrapper data from a JSON string."""
+        self._data = json.loads(json_string)
+
     def __str__(self):
         """Serialize the object as a JSON object."""
         return json.dumps(self._data)
@@ -39,6 +43,13 @@ class BatchAction(JSONWrapper):
         JSONWrapper.__init__(self)
         action = {'href': href, 'expires_in': expires_in}
         self._data[operation_type] = action
+
+    def set_data_from_JSON(self, json_string):
+        """Set action content from json string."""
+        temp = self._data.copy()
+        super(BatchAction).set_data_from_JSON(json_string)
+        # TODO terminar implementacion
+        # verificar que mantiene la estructura de la accion
 
 
 class BatchObject(JSONWrapper):
@@ -64,6 +75,14 @@ class BatchRequest(JSONWrapper):
         self._data['transfers'] = transfers
         self._data['operation'] = operation
         self._data['objects'] = objects
+
+    def get_objects(self):
+        """Retrieve objects from data dictionary."""
+        temp = self._data['objects']
+        objects = []
+        for o in temp:
+            objects.append(BatchObject(oid=o['oid'], size=o['size']))
+        return objects
 
 
 class BatchResponse(JSONWrapper):

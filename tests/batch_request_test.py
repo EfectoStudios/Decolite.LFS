@@ -40,6 +40,13 @@ class JSONWrapperTest(unittest.TestCase):
         wrapper = JSONWrapper()
         self.assertDictEqual(wrapper.get_data(), {})
 
+    def test_data_from_string(self):
+        """Test the dictionary creation from JSON string."""
+        wrapper = JSONWrapper()
+        sample = '{"operation": "download", "transfers": [ "basic" ]}'
+        wrapper.set_data_from_JSON(sample)
+        self.assertDictEqual(wrapper.get_data(), json.loads(sample))
+
     def test_str(self):
         """Test str() function equal JSON dump."""
         test_data = {'foo': 'bar', 'foo2': ['hello', 'world']}
