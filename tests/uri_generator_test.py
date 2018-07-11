@@ -1,6 +1,8 @@
 """Unit tests for uri generation."""
+import os
 import unittest
 from boto3 import resource, client
+from mock import patch
 from moto import mock_s3
 from src.service.uri_generator import create_uri
 
@@ -24,23 +26,23 @@ class URIGeneratorTest(unittest.TestCase):
                                       Key=self.owner_name + '/' + self.repo_name + '/' + self.oid,  # noqa: E501
                                       Body="Totally a binary file")
 
+    @patch.dict(os.environ, {'LFS_S3_BUCKET_NAME': 'some-lfs'})
     def test_download_uri(self):
         """Verify that the uri is generated according to the file and repo."""
         url_regex = 'https://' + self.bucket_name + '.s3.amazonaws.com/'
         url_regex += self.owner_name + '/' + self.repo_name + '/' + self.oid
 
-        self.assertTrue(url_regex in create_uri(self.bucket_name,
-                                                self.owner_name,
+        self.assertTrue(url_regex in create_uri(self.owner_name,
                                                 self.repo_name,
                                                 self.oid))
 
+    @patch.dict(os.environ, {'LFS_S3_BUCKET_NAME': 'some-lfs'})
     def test_upload_uri(self):
         """Verify that the uri is generated according to the file and repo."""
         url_regex = 'https://' + self.bucket_name + '.s3.amazonaws.com/'
         url_regex += self.owner_name + '/' + self.repo_name + '/' + self.oid
 
-        self.assertTrue(url_regex in create_uri(self.bucket_name,
-                                                self.owner_name,
+        self.assertTrue(url_regex in create_uri(self.owner_name,
                                                 self.repo_name,
                                                 self.oid,
                                                 upload=True))
