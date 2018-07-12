@@ -52,7 +52,11 @@ def lock_handler():
 def batch_handler(owner, repo, request):
     """Handle batch requests."""
     req = BatchRequest()
-    req.set_data_from_JSON(request)
+    try:
+        req.set_data_from_JSON(request)
+    except json.JSONDecodeError:
+        return create_response(status_code=400)
+
     operation = req.get_data()['operation']
 
     objects = req.get_objects()
@@ -65,7 +69,6 @@ def batch_handler(owner, repo, request):
         res_objects.append(obj.get_data())
 
     batch_res = json.dumps(res_objects)
-    print(batch_res)
 
     res = create_response(response=batch_res)
     return res
