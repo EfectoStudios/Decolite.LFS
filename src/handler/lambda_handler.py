@@ -2,7 +2,7 @@
 import json
 from src.handler.routes import get_path_request
 from src.service.authentication import authenticate
-from src.service.batch_request import BatchRequest, BatchAction
+from src.service.batch_request import BatchResponse, BatchRequest, BatchAction
 from src.service.uri_generator import create_uri
 
 
@@ -70,7 +70,8 @@ def batch_handler(repo, request):
         obj.add_action(act)
         res_objects.append(obj.get_data())
 
-    batch_res = json.dumps(res_objects)
+    batch_obj = json.dumps(res_objects)
+    batch_res = BatchResponse(objects=batch_obj)
 
     res = create_response(response=batch_res)
     return res

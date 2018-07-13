@@ -16,6 +16,7 @@ def get_path_request(path):
     regex = re.compile(PATH_REGEX)
     m = regex.search(path)
     if not m:
-        return None, None, 'BAD_REQUEST'
+        print(path)
+        return None, 'BAD_REQUEST'
     type = REQUEST_TYPES.get(m.group('tail'), 'BAD_REQUEST')
     return m.group('repo'), type
