@@ -8,20 +8,22 @@ from src.service.uri_generator import create_uri
 
 def lfs_handler(event, context):
     """Handle git lfs requests sent through API Gateway."""
-    if 'Authorization' not in event['headers']:
+    if not event['headers']:
+        return create_response(status_code=401)
+    elif 'Authorization' not in event['headers']:
         return create_response(status_code=401)
     elif not authenticate(event['headers']['Authorization']):
         return create_response(status_code=401)
 
     path = event['path']
-    owner, repo, type = get_path_request(path)
+    repo, type = get_path_request(path)
 
     if type == 'BASE':
         res = base_handler()
     elif type == 'LOCKS':
         res = lock_handler()
     elif type == 'BATCH':
-        res = batch_handler(owner, repo, event['body'])
+        res = batch_handler(repo, event['body'])
     else:
         res = create_response(status_code=400)
     return res
@@ -49,7 +51,7 @@ def lock_handler():
     return create_response(status_code=404)
 
 
-def batch_handler(owner, repo, request):
+def batch_handler(repo, request):
     """Handle batch requests."""
     req = BatchRequest()
     try:
@@ -62,7 +64,7 @@ def batch_handler(owner, repo, request):
     objects = req.get_objects()
     res_objects = []
     for obj in objects:
-        uri = create_uri(owner, repo, obj.get_data()['oid'],
+        uri = create_uri(repo, obj.get_data()['oid'],
                          upload=operation == 'upload')
         act = BatchAction(href=uri, operation_type=operation)
         obj.add_action(act)

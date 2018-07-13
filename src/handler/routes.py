@@ -8,7 +8,7 @@ REQUEST_TYPES = {BATCH: 'BATCH',
                  LOCKS: 'LOCKS',
                  '': 'BASE'}
 
-PATH_REGEX = r"/?(?P<owner>[a-zA-Z0-9]+?)/(?P<repo>[a-zA-Z0-9]+.git)/info/lfs/?(?P<tail>[a-zA-Z0-9/]*)"  # noqa: E501
+PATH_REGEX = r"/?(?P<repo>[a-zA-Z0-9/]+.git)/info/lfs/?(?P<tail>[a-zA-Z0-9/]*)"
 
 
 def get_path_request(path):
@@ -18,4 +18,4 @@ def get_path_request(path):
     if not m:
         return None, None, 'BAD_REQUEST'
     type = REQUEST_TYPES.get(m.group('tail'), 'BAD_REQUEST')
-    return m.group('owner'), m.group('repo'), type
+    return m.group('repo'), type

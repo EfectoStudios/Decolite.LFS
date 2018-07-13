@@ -13,7 +13,6 @@ class URIGeneratorTest(unittest.TestCase):
     def setUp(self):
         """Set mock stub services for uri testing."""
         self.bucket_name = 'some-lfs'
-        self.owner_name = 'SomeRandomGuy'
         self.repo_name = 'SomeRandomRepo'
         self.oid = 'SomeRandomOID'
         with mock_s3():
@@ -23,26 +22,24 @@ class URIGeneratorTest(unittest.TestCase):
             # Adding a file
             self.s3_client = client('s3', region_name='us-east-2')
             self.s3_client.put_object(Bucket='some-lfs',
-                                      Key=self.owner_name + '/' + self.repo_name + '/' + self.oid,  # noqa: E501
+                                      Key=self.repo_name + '/' + self.oid,
                                       Body="Totally a binary file")
 
     @patch.dict(os.environ, {'LFS_S3_BUCKET_NAME': 'some-lfs'})
     def test_download_uri(self):
         """Verify that the uri is generated according to the file and repo."""
         url_regex = 'https://' + self.bucket_name + '.s3.amazonaws.com/'
-        url_regex += self.owner_name + '/' + self.repo_name + '/' + self.oid
+        url_regex += self.repo_name + '/' + self.oid
 
-        self.assertTrue(url_regex in create_uri(self.owner_name,
-                                                self.repo_name,
+        self.assertTrue(url_regex in create_uri(self.repo_name,
                                                 self.oid))
 
     @patch.dict(os.environ, {'LFS_S3_BUCKET_NAME': 'some-lfs'})
     def test_upload_uri(self):
         """Verify that the uri is generated according to the file and repo."""
         url_regex = 'https://' + self.bucket_name + '.s3.amazonaws.com/'
-        url_regex += self.owner_name + '/' + self.repo_name + '/' + self.oid
+        url_regex += self.repo_name + '/' + self.oid
 
-        self.assertTrue(url_regex in create_uri(self.owner_name,
-                                                self.repo_name,
+        self.assertTrue(url_regex in create_uri(self.repo_name,
                                                 self.oid,
                                                 upload=True))
