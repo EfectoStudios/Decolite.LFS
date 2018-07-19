@@ -21,7 +21,7 @@ class URIGeneratorTest(unittest.TestCase):
             self.s3.create_bucket(Bucket=self.bucket_name)
             # Adding a file
             self.s3_client = client('s3', region_name='us-east-2')
-            self.s3_client.put_object(Bucket='some-lfs',
+            self.s3_client.put_object(Bucket=self.bucket_name,
                                       Key=self.repo_name + '/' + self.oid,
                                       Body="Totally a binary file")
 
