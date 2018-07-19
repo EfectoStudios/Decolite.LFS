@@ -8,7 +8,7 @@ REQUEST_TYPES = {BATCH: 'BATCH',
                  LOCKS: 'LOCKS',
                  '': 'BASE'}
 
-PATH_REGEX = r"/?(?P<repo>[a-zA-Z0-9/]+.git)/?(?P<tail>[a-zA-Z0-9/]*)"
+PATH_REGEX = r"/?(?P<repo>[a-zA-Z0-9])/(?P<tail>[a-zA-Z0-9/]*)"
 
 
 def get_path_request(path):
