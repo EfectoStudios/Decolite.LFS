@@ -8,7 +8,7 @@ class RoutesTest(unittest.TestCase):
 
     def test_path_rrequest(self):
         """Test request parsing."""
-        base = '/someone/holi.git/info/lfs/'
+        base = '/someone/holi.git/'
         batch = base + 'objects/batch'
         locks = base + 'locks'
 
