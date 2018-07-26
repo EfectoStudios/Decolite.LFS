@@ -80,10 +80,9 @@ def batch_handler(repo, request):
             else:
                 err = {'code': 404, 'message': 'File not found'}
 
-        if down or up or err:
-            res_objects.append(create_batch_object(obj['oid'], size=obj['size'],  # noqa: E501
-                                                   upload=up, download=down,
-                                                   error=err, authenticated=True))  # noqa: E501
+        res_objects.append(create_batch_object(obj['oid'], size=obj['size'],
+                                               upload=up, download=down,
+                                               error=err, authenticated=True))
     resp = create_batch_response(objects=res_objects)
 
     return create_response(response=json.dumps(resp))
